@@ -19,21 +19,17 @@
                 <div>
                   {{ form.original_link(class="form-control form-control-lg py-2 mb-3", placeholder=form.original_link.label.text) }}
                   <p>
-                    {% if form.original_link.errors %}
-                      {% for error in form.original_link.errors %}
-                        <span style="color:red">{{ error }}</span>
-                      {% endfor %}
-                    {% endif %}
+                    {% for error in form.original_link.errors %}
+                      <span style="color:red">{{ error }}</span>
+                    {% endfor %}
                   </p>
                 </div>
                 <div>
                   {{ form.custom_id(class="form-control form-control-lg py-2 mb-3", placeholder=form.custom_id.label.text) }}
                     <p>
-                      {% if form.custom_id.errors %}
-                        {% for error in form.custom_id.errors %}
-                          <span style="color:red">{{ error }}</span>
-                        {% endfor %}
-                      {% endif %}
+                      {% for error in form.custom_id.errors %}
+                        <span style="color:red">{{ error }}</span>
+                      {% endfor %}
                     </p>
                 </div>
                 {{ form.submit(class="btn btn-primary") }}
@@ -54,14 +50,13 @@
               {% with messages = get_flashed_messages() %}
                 {% if messages %}
                   {% for message in messages %}
-                    <h5 class="text-center">{{ message }}
-                      {% if link %}
-                        <a href="{{ link }}">{{ link }}</a>
-                      {% endif %}
-                    </h5>
+                    <h5 class="text-center">{{ message }}</h5>
                   {% endfor %}
                 {% endif %}
               {% endwith %}
+              {% if url %}
+                <a href="{{ url_for('redirect_view', short_id=url.short, _external=True) }}">{{ url_for('redirect_view', short_id=url.short, _external=True) }}</a>
+              {% endif %}
             </p>
           </div>
           <div class="col-sm">
