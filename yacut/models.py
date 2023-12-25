@@ -18,6 +18,7 @@ ID_ERROR_MESSAGE = 'Указанный id не найден'
 PATTERN_MESSAGE = 'Указано недопустимое имя для короткой ссылки'
 ITERATIONS = 10
 
+
 class URLMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     original = db.Column(db.String(ORIGINAL_LENGTH), nullable=False)
@@ -44,8 +45,8 @@ class URLMap(db.Model):
         else:
             short = URLMap.get_unique_short()
         url = URLMap(
-            original = original,
-            short = short
+            original=original,
+            short=short
         )
         db.session.add(url)
         db.session.commit()
