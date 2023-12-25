@@ -1,24 +1,22 @@
 import random
-import re
-
 from datetime import datetime
 
 from flask import url_for
 
 from yacut import db
-
 from .const import (
-    LABELS, ORIGINAL_LENGTH,
-    SHORT_LENGTH, PATTERN,
-    PATTERN_FOR_GEN_URL,
-    REDIRECT_VIEW, UNIQUE_SHORT_MSG
+    ORIGINAL_LENGTH, LEN_OF_SHORT,
+    SHORT_LENGTH,
+    PATTERN_FOR_SHORT
 )
 from .error_handlers import InvalidAPIUsage
 
 
-ID_ERR_MSG = 'Указанный id не найден'
-PATTERN_MSG = 'Указано недопустимое имя для короткой ссылки'
-
+REDIRECT_VIEW = 'redirect_view'
+UNIQUE_SHORT_MESSAGE = 'Предложенный вариант короткой ссылки уже существует.'
+ID_ERROR_MESSAGE = 'Указанный id не найден'
+PATTERN_MESSAGE = 'Указано недопустимое имя для короткой ссылки'
+ITERATIONS = 10
 
 class URLMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,37 +29,44 @@ class URLMap(db.Model):
             url=self.original,
             short_link=url_for(
                 REDIRECT_VIEW,
-                short_id=self.short,
+                short=self.short,
                 _external=True
             )
         )
 
     @staticmethod
-    def from_dict(data):
-        instance = URLMap()
-        for field_key, field_item in LABELS.items():
-            if field_item in data:
-                setattr(instance, field_key, data[field_item])
-        return instance
-
-    def save(self):
-        if self.short:
-            if not check_unique_short_id(self.short):
-                raise InvalidAPIUsage(UNIQUE_SHORT_MSG)
-            elif not re.match(PATTERN, self.short):
-                raise InvalidAPIUsage(PATTERN_MSG)
+    def save(original, short):
+        if short:
+            if len(short) > SHORT_LENGTH:
+                raise InvalidAPIUsage(PATTERN_MESSAGE)
+            if not URLMap.check_unique_short(short):
+                raise InvalidAPIUsage(UNIQUE_SHORT_MESSAGE)
         else:
-            self.short = get_unique_short_id()
-        db.session.add(self)
+            short = URLMap.get_unique_short()
+        url = URLMap(
+            original = original,
+            short = short
+        )
+        db.session.add(url)
         db.session.commit()
+        return url
 
+    @staticmethod
+    def check_unique_short(short_link):
+        return not URLMap.query.filter_by(short=short_link).first()
 
-def check_unique_short_id(short_link):
-    return not URLMap.query.filter_by(short=short_link).first()
+    @staticmethod
+    def get_unique_short():
+        for _ in range(ITERATIONS):
+            short_link = ''.join(random.choices(PATTERN_FOR_SHORT, k=LEN_OF_SHORT))
+            if not URLMap.check_unique_short(short_link):
+                raise InvalidAPIUsage(ID_ERROR_MESSAGE)
+        return short_link
 
+    @staticmethod
+    def get_object(short):
+        return URLMap.query.filter_by(short=short).first()
 
-def get_unique_short_id():
-    short_link = ''.join(random.choices(PATTERN_FOR_GEN_URL, k=6))
-    if not check_unique_short_id(short_link):
-        raise InvalidAPIUsage(ID_ERR_MSG)
-    return short_link
+    @staticmethod
+    def get_or_404(short):
+        return URLMap.query.filter_by(short=short).first_or_404()

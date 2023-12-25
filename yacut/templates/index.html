@@ -55,7 +55,7 @@
                 {% endif %}
               {% endwith %}
               {% if url %}
-                <a href="{{ url_for('redirect_view', short_id=url.short, _external=True) }}">{{ url_for('redirect_view', short_id=url.short, _external=True) }}</a>
+                <a href="{{ url }}">{{ url }}</a>
               {% endif %}
             </p>
           </div>

@@ -51,6 +51,15 @@ python3 -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
+Создать в корневой папке файл .env с данными:
+
+```
+FLASK_APP=yacut
+FLASK_ENV=development
+DATABASE_URI=sqlite:///db.sqlite3
+SECRET_KEY=YOUR_SECRET_KEY
+```
+
 Запустите проект:
 
 ```bash

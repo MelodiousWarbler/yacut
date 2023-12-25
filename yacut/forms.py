@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Length, Optional, URL, Regexp
 from .const import (
     PATTERN,
     SHORT_LENGTH,
-    REGEX_MSG
+    ORIGINAL_LENGTH
 )
 
 LONG_LINK = 'Длинная ссылка'
@@ -12,6 +12,7 @@ OBLIGATORY_FIELD = 'Обязательное поле'
 LINK_IS_NOT_VALID = 'Ссылка не валидна'
 YOUR_SHORT_LINK = 'Ваш вариант короткой ссылки'
 CREATE = 'Создать'
+REGEX_MSG = 'Используйте буквы латинского алфавита и цифры'
 
 
 class URLMapForm(FlaskForm):
@@ -19,7 +20,8 @@ class URLMapForm(FlaskForm):
         LONG_LINK,
         validators=[
             DataRequired(message=OBLIGATORY_FIELD),
-            URL(message=LINK_IS_NOT_VALID)
+            URL(message=LINK_IS_NOT_VALID),
+            Length(max=ORIGINAL_LENGTH)
         ]
     )
     custom_id = StringField(

@@ -1,20 +1,25 @@
+import re
 from http import HTTPStatus
 
-from flask import jsonify, request
+from flask import flash, jsonify, request, url_for
 
 from . import app
+from .const import PATTERN, SHORT_LENGTH
 from .error_handlers import InvalidAPIUsage
 from .models import URLMap
 
 
 ID_NOT_FOUND = 'Указанный id не найден'
 NO_DATA = 'Отсутствует тело запроса'
-NO_URL = '\"url\" является обязательным полем!'
+NO_URL = '"url" является обязательным полем!'
+WRONG_SHORT = 'Указано недопустимое имя для короткой ссылки'
+SHORT_EXISTS = 'Предложенный вариант короткой ссылки уже существует.'
+NO_LINK = 'Ссылка не создана'
 
 
-@app.route('/api/id/<short_id>/', methods=['GET'])
-def get_url(short_id):
-    url_map_obj = URLMap.query.filter_by(short=short_id).first()
+@app.route('/api/id/<short>/', methods=['GET'])
+def get_url(short):
+    url_map_obj = URLMap.get_object(short)
     if url_map_obj is None:
         raise InvalidAPIUsage(ID_NOT_FOUND, HTTPStatus.NOT_FOUND)
     return jsonify({'url': url_map_obj.original}), HTTPStatus.OK
@@ -27,6 +32,19 @@ def create_short_link():
         raise InvalidAPIUsage(NO_DATA)
     if 'url' not in data:
         raise InvalidAPIUsage(NO_URL)
-    url_map = URLMap.from_dict(data)
-    url_map.save()
-    return jsonify(url_map.to_dict()), HTTPStatus.CREATED
+    short = data.get('custom_id')
+    if short:
+        if not re.search(
+            PATTERN,
+            short
+        ) or len(short) > SHORT_LENGTH:
+            raise InvalidAPIUsage(WRONG_SHORT)
+        if URLMap.query.filter_by(short=short).first():
+            raise InvalidAPIUsage(SHORT_EXISTS)
+    try:
+        url = URLMap.save(
+            data.get('url'), data.get('custom_id')
+        )
+        return jsonify(url.to_dict()), HTTPStatus.CREATED
+    except InvalidAPIUsage:
+        flash(NO_LINK)
