@@ -30,8 +30,10 @@ def create_short_link():
         raise InvalidAPIUsage(NO_URL)
     try:
         return jsonify(
-            URLMap.create(data.get('url'),
-            data.get('custom_id')).to_dict()
+            URLMap.create(
+                data.get('url'),
+                data.get('custom_id')
+            ).to_dict()
         ), HTTPStatus.CREATED
     except ValidationError as error:
         raise InvalidAPIUsage(message=error.message)
