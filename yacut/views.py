@@ -31,7 +31,7 @@ def index_view():
         )
     except ValidationError as error:
         flash(error.message)
-        return render_template(INDEX, form=form)
+    return render_template(INDEX, form=form)
 
 
 @app.route('/<string:short>')

@@ -60,7 +60,6 @@ class URLMap(db.Model):
         db.session.commit()
         return url
 
-
     @staticmethod
     def get_unique_short():
         for _ in range(ITERATIONS):
