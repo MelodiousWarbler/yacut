@@ -18,9 +18,10 @@ def index_view():
         return render_template(INDEX, form=form)
     try:
         url = URLMap.save(original=form.original_link.data, short=form.custom_id.data)
+        render=url_for(REDIRECT_VIEW, short=url.short, _external=True)
         return render_template(
             INDEX,
-            url=url_for(REDIRECT_VIEW, short=url.short, _external=True),
+            url=render,
             form=form
         )
     except InvalidAPIUsage:
