@@ -1,7 +1,7 @@
 import re
 from http import HTTPStatus
 
-from flask import flash, jsonify, request, url_for
+from flask import flash, jsonify, request
 
 from . import app
 from .const import PATTERN, SHORT_LENGTH
