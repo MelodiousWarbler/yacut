@@ -60,6 +60,12 @@ DATABASE_URI=sqlite:///db.sqlite3
 SECRET_KEY=YOUR_SECRET_KEY
 ```
 
+Создать базу данных и выполнить миграции:
+
+```bash
+flask db upgrade
+```
+
 Запустите проект:
 
 ```bash
