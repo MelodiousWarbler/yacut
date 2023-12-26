@@ -1,9 +1,10 @@
 from http import HTTPStatus
 
 from flask import jsonify, request
+from wtforms.validators import ValidationError
 
 from . import app
-from .error_handlers import InvalidAPIUsage, ValidationError
+from .error_handlers import InvalidAPIUsage
 from .models import URLMap
 
 
@@ -15,7 +16,7 @@ NO_LINK = 'Ссылка не создана'
 
 @app.route('/api/id/<short>/', methods=['GET'])
 def get_url(short):
-    url_map_obj = URLMap.get_object(short)
+    url_map_obj = URLMap.get_short(short)
     if url_map_obj is None:
         raise InvalidAPIUsage(ID_NOT_FOUND, HTTPStatus.NOT_FOUND)
     return jsonify({'url': url_map_obj.original}), HTTPStatus.OK
@@ -31,9 +32,9 @@ def create_short_link():
     try:
         return jsonify(
             URLMap.create(
-                data.get('url'),
+                data['url'],
                 data.get('custom_id')
             ).to_dict()
         ), HTTPStatus.CREATED
-    except ValidationError as error:
-        raise InvalidAPIUsage(message=error.message)
+    except (ValidationError, RuntimeError) as error:
+        raise InvalidAPIUsage(str(error))

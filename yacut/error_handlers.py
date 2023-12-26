@@ -18,13 +18,6 @@ class InvalidAPIUsage(Exception):
         return dict(message=self.message)
 
 
-class ValidationError(Exception):
-
-    def __init__(self, message):
-        super().__init__()
-        self.message = message
-
-
 @app.errorhandler(InvalidAPIUsage)
 def invalid_api_usage(error):
     return jsonify(error.to_dict()), error.status_code

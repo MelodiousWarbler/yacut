@@ -1,8 +1,8 @@
 from flask import flash, redirect, render_template, url_for
+from wtforms.validators import ValidationError
 
 from . import app
 from .const import REDIRECT_VIEW
-from .error_handlers import ValidationError
 from .forms import URLMapForm
 from .models import URLMap
 
@@ -29,8 +29,8 @@ def index_view():
             ),
             form=form
         )
-    except ValidationError as error:
-        flash(error.message)
+    except (ValidationError, RuntimeError) as error:
+        flash(error)
         return render_template(INDEX, form=form)
 
 
