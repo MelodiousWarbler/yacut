@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, URLField
 from wtforms.validators import DataRequired, Length, Optional, URL, Regexp
 from .const import (
-    PATTERN,
+    REGEX_FOR_SHORT,
     SHORT_LENGTH,
     ORIGINAL_LENGTH
 )
@@ -12,7 +12,7 @@ OBLIGATORY_FIELD = 'Обязательное поле'
 LINK_IS_NOT_VALID = 'Ссылка не валидна'
 YOUR_SHORT_LINK = 'Ваш вариант короткой ссылки'
 CREATE = 'Создать'
-REGEX_MSG = 'Используйте буквы латинского алфавита и цифры'
+REGEX_MESSAGE = 'Используйте буквы латинского алфавита и цифры'
 
 
 class URLMapForm(FlaskForm):
@@ -30,8 +30,8 @@ class URLMapForm(FlaskForm):
             Length(max=SHORT_LENGTH),
             Optional(),
             Regexp(
-                PATTERN,
-                message=REGEX_MSG
+                REGEX_FOR_SHORT,
+                message=REGEX_MESSAGE
             )
         ]
     )

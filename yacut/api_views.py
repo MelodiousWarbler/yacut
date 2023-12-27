@@ -16,7 +16,7 @@ NO_LINK = 'Ссылка не создана'
 
 @app.route('/api/id/<short>/', methods=['GET'])
 def get_url(short):
-    url_map_obj = URLMap.get_short(short)
+    url_map_obj = URLMap.get(short)
     if url_map_obj is None:
         raise InvalidAPIUsage(ID_NOT_FOUND, HTTPStatus.NOT_FOUND)
     return jsonify({'url': url_map_obj.original}), HTTPStatus.OK
@@ -33,7 +33,8 @@ def create_short_link():
         return jsonify(
             URLMap.create(
                 data['url'],
-                data.get('custom_id')
+                data.get('custom_id'),
+                True
             ).to_dict()
         ), HTTPStatus.CREATED
     except (ValidationError, RuntimeError) as error:
