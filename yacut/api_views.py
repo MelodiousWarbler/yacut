@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 from flask import jsonify, request
-from wtforms.validators import ValidationError
 
 from . import app
 from .error_handlers import InvalidAPIUsage
@@ -37,5 +36,5 @@ def create_short_link():
                 True
             ).to_dict()
         ), HTTPStatus.CREATED
-    except (ValidationError, RuntimeError) as error:
+    except (RuntimeError) as error:
         raise InvalidAPIUsage(str(error))

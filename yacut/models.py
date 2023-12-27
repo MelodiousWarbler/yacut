@@ -36,20 +36,20 @@ class URLMap(db.Model):
         )
 
     @staticmethod
-    def create(original, short, api=False):
+    def create(original, short, validate=False):
         if short:
-            if api:
+            if validate:
                 if len(short) > SHORT_LENGTH or not re.search(
                     REGEX_FOR_SHORT,
                     short
                 ):
                     raise RuntimeError(WRONG_SHORT)
-                if len(original) > ORIGINAL_LENGTH:
-                    raise RuntimeError(TOO_LONG_ORIGINAL)
             if URLMap.get(short):
                 raise RuntimeError(SHORT_EXISTS)
         else:
             short = URLMap.get_unique_short()
+        if len(original) > ORIGINAL_LENGTH:
+            raise RuntimeError(TOO_LONG_ORIGINAL)
         url = URLMap(
             original=original,
             short=short

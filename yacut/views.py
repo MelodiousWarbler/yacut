@@ -1,5 +1,4 @@
 from flask import flash, redirect, render_template, url_for
-from wtforms.validators import ValidationError
 
 from . import app
 from .const import REDIRECT_VIEW
@@ -29,7 +28,7 @@ def index_view():
             ),
             form=form
         )
-    except (ValidationError, RuntimeError) as error:
+    except (RuntimeError) as error:
         flash(error)
         return render_template(INDEX, form=form)
 
